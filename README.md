@@ -41,8 +41,6 @@ A Claude Code plugin providing PreToolUse security hooks to block dangerous comm
    /plugin install protective-hooks@protective-hooks
    ```
 
-4. Configure your preferences when prompted
-
 ### Option 2: From a GitHub Repository
 
 ```bash
