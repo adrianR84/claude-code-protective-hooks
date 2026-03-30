@@ -20,15 +20,42 @@ A Claude Code plugin providing PreToolUse security hooks to block dangerous comm
 
 ## Installation
 
-### Local Installation for Development
+### Option 1: Local Installation (Testing)
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/adrianR84/claude-code-protective-hooks.git
+   cd claude-code-protective-hooks
+   ```
+
+2. Add the local marketplace:
+
+   ```
+   /plugin marketplace add .
+   ```
+
+3. Install the plugin:
+
+   ```
+   /plugin install protective-hooks@protective-hooks
+   ```
+
+4. Configure your preferences when prompted
+
+### Option 2: From a GitHub Repository
 
 ```bash
-# Clone the repository
+/plugin marketplace add adrianR84/claude-code-protective-hooks
+/plugin install protective-hooks@protective-hooks
+```
+
+### Option 3: Session-Only (No Install)
+
+```bash
 git clone https://github.com/adrianR84/claude-code-protective-hooks.git
 cd claude-code-protective-hooks
-
-# Install locally
-claude-code plugin install ./
+claude --plugin-dir .
 ```
 
 ## Configuration
