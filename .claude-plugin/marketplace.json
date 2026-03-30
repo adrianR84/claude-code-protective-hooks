@@ -1,0 +1,27 @@
+{
+  "name": "claude-code-protective-hooks",
+  "owner": {
+    "name": "adrianR84"
+  },
+  "description": "Security hooks for Claude Code",
+  "plugins": [
+    {
+      "name": "protective-hooks",
+      "source": "./",
+      "description": "Hooks to block dangerous commands and protect secrets",
+      "author": {
+        "name": "adrianR84"
+      },
+      "category": "security",
+      "repository": "https://github.com/adrianR84/claude-code-protective-hooks",
+      "keywords": [
+        "security",
+        "hooks",
+        "protection",
+        "secrets",
+        "dangerous-commands"
+      ],
+      "license": "MIT"
+    }
+  ]
+}

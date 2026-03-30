@@ -1,0 +1,10 @@
+{
+  "name": "protective-hooks",
+  "description": "Hooks to block dangerous commands and protect secrets",
+  "author": {
+    "name": "adrianR84"
+  },
+  "category": "security",
+  "repository": "https://github.com/adrianR84/claude-code-protective-hooks",
+  "keywords": ["security", "hooks", "protection", "secrets", "dangerous-commands"]
+}
