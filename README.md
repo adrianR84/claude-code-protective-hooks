@@ -12,15 +12,15 @@ A Claude Code plugin providing PreToolUse security hooks to block dangerous comm
 
 ## Safety Levels
 
-| Level | Description |
-|-------|-------------|
-| `critical` | Blocks catastrophic operations: rm -rf ~, dd to disk, fork bombs |
-| `high` | Blocks risky operations: force push, git reset --hard, secrets exposure |
-| `strict` | Blocks cautionary operations: any force push, sudo rm, docker prune |
+| Level      | Description                                                             |
+| ---------- | ----------------------------------------------------------------------- |
+| `critical` | Blocks catastrophic operations: rm -rf ~, dd to disk, fork bombs        |
+| `high`     | Blocks risky operations: force push, git reset --hard, secrets exposure |
+| `strict`   | Blocks cautionary operations: any force push, sudo rm, docker prune     |
 
 ## Installation
 
-### Option 1: Local Installation (Testing)
+### Option 1: Local Installation (Project)
 
 1. Clone the repository:
 
@@ -38,14 +38,14 @@ A Claude Code plugin providing PreToolUse security hooks to block dangerous comm
 3. Install the plugin:
 
    ```
-   /plugin install protective-hooks@protective-hooks
+   /plugin install protective-hooks@claude-code-protective-hooks
    ```
 
 ### Option 2: From a GitHub Repository
 
 ```bash
 /plugin marketplace add adrianR84/claude-code-protective-hooks
-/plugin install protective-hooks@protective-hooks
+/plugin install protective-hooks@claude-code-protective-hooks
 ```
 
 ### Option 3: Session-Only (No Install)
@@ -64,7 +64,7 @@ The hooks are automatically enabled after installation. To customize:
 2. Edit `scripts/pre-tool-use/protect-secrets.js` to adjust `SAFETY_LEVEL`
 
 ```javascript
-const SAFETY_LEVEL = 'critical'; // 'critical' | 'high' | 'strict'
+const SAFETY_LEVEL = "critical"; // 'critical' | 'high' | 'strict'
 ```
 
 ## Hooks Overview
@@ -86,6 +86,7 @@ Protects sensitive files from being read, modified, or exfiltrated:
 - **Strict**: `database.yml`, `.gitconfig`, `.ssh/known_hosts`
 
 Also detects secret exfiltration via:
+
 - `cat .env`, `source .env`
 - `curl -d @.env`, `scp` with secrets
 - Environment variable dumps (`printenv`)
