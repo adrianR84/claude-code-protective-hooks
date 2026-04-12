@@ -7,16 +7,21 @@ A Claude Code plugin providing PreToolUse security hooks to block dangerous comm
 - **Block Dangerous Commands**: Prevents execution of catastrophic commands like `rm -rf /`, `dd` to disk devices, fork bombs
 - **Protect Secrets**: Guards against reading/modifying sensitive files (.env, SSH keys, AWS credentials, etc.)
 - **Configurable Safety Levels**: Choose from `critical`, `high`, or `strict` protection levels
-- **Comprehensive Patterns**: Detects secret exfiltration attempts, dangerous git operations, and more
+- **Smart Decisions**: Critical patterns are blocked; high/strict patterns prompt for confirmation
+- **Comprehensive Patterns**: Detects secret exfiltration attempts, dangerous git operations, Kubernetes secrets, Vault access, and more
 - **Logging**: All blocked operations are logged to `~/.claude/hooks-logs/`
 
 ## Safety Levels
 
 | Level      | Description                                                             |
 | ---------- | ----------------------------------------------------------------------- |
-| `critical` | Blocks catastrophic operations: rm -rf ~, dd to disk, fork bombs        |
-| `high`     | Blocks risky operations: force push, git reset --hard, secrets exposure |
-| `strict`   | Blocks cautionary operations: any force push, sudo rm, docker prune     |
+| `critical` | **Deny** - Blocks catastrophic operations: rm -rf ~, dd to disk, fork bombs |
+| `high`     | **Ask** - Risky operations: force push, git reset --hard, secrets exposure |
+| `strict`   | **Ask** - Cautionary operations: any force push, sudo rm, docker prune     |
+
+**Decision Behavior:**
+- `critical` patterns → **deny** (blocked immediately, cannot be bypassed even with `dangerously-skip-permissions`)
+- `high` and `strict` patterns → **ask** (prompts for user confirmation)
 
 ## Installation
 
@@ -60,11 +65,13 @@ claude --plugin-dir .
 
 The hooks are automatically enabled after installation. To customize:
 
-1. Edit `scripts/pre-tool-use/block-dangerous-commands.js` to adjust `SAFETY_LEVEL`
-2. Edit `scripts/pre-tool-use/protect-secrets.js` to adjust `SAFETY_LEVEL`
+1. Edit `scripts/pre-tool-use/block-dangerous-commands.js`
+2. Edit `scripts/pre-tool-use/protect-secrets.js`
+
+### Safety Level
 
 ```javascript
-const SAFETY_LEVEL = "critical"; // 'critical' | 'high' | 'strict'
+const SAFETY_LEVEL = "strict"; // 'critical' | 'high' | 'strict'
 ```
 
 ## Hooks Overview
@@ -73,23 +80,31 @@ const SAFETY_LEVEL = "critical"; // 'critical' | 'high' | 'strict'
 
 Blocks dangerous bash commands before execution:
 
-- **Critical**: `rm -rf /`, `dd` to disk, `mkfs`, fork bombs
-- **High**: `curl|wget | bash`, force push to main/master, `git reset --hard`, `chmod 777`
-- **Strict**: Any force push, `sudo rm`, `docker prune`
+| Level | Decision | Examples |
+|-------|----------|----------|
+| critical | deny | `rm -rf /`, `dd to disk`, `mkfs`, fork bombs |
+| high | ask | `curl | bash`, force push to main, `git reset --hard`, `chmod 777`, `kubectl get secrets`, `vault read` |
+| strict | ask | Any force push, `sudo rm`, `docker prune`, `crontab -l`, `pkill` |
 
-### protect-secrets.js (Edit|Write|Bash)
+### protect-secrets.js (Read|Edit|Write|Bash)
 
 Protects sensitive files from being read, modified, or exfiltrated:
 
-- **Critical**: `.env`, `.ssh/id_*`, `.aws/credentials`, `.kube/config`, `*.pem`, `*.key`
-- **High**: `credentials.json`, `secrets.yml`, service account keys, `.netrc`, `docker-config`
-- **Strict**: `database.yml`, `.gitconfig`, `.ssh/known_hosts`
+**File Patterns:**
 
-Also detects secret exfiltration via:
+| Level | Decision | Examples |
+|-------|----------|----------|
+| critical | deny | `.env`, `.ssh/id_*`, `.aws/credentials`, `.kube/config`, `*.pem`, `*.key` |
+| high | ask | `credentials.json`, `secrets.yml`, service accounts, `.netrc`, Terraform state, FileZilla XML |
+| strict | ask | `database.yml`, `.gitconfig`, `.ssh/known_hosts`, `mongoid.yml`, `database.env` |
 
-- `cat .env`, `source .env`
-- `curl -d @.env`, `scp` with secrets
-- Environment variable dumps (`printenv`)
+**Bash Patterns (secrets exfiltration):**
+
+| Level | Decision | Examples |
+|-------|----------|----------|
+| critical | deny | `cat .env`, `cat id_rsa`, `cat .aws/credentials` |
+| high | ask | `printenv`, `source .env`, `curl -d @.env`, `scp` secrets, `rsync` secrets, `kubectl get secrets` |
+| strict | ask | `grep -r password`, `base64 encoding`, `docker login`, `mysql -p` in cmdline |
 
 ## Project Structure
 
