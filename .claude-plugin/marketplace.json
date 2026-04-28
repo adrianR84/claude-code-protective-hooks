@@ -21,7 +21,8 @@
         "secrets",
         "dangerous-commands"
       ],
-      "license": "MIT"
+      "license": "MIT",
+	  "version": "1.0.1"
     }
   ]
 }
