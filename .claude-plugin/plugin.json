@@ -1,5 +1,6 @@
 {
   "name": "protective-hooks",
+  "version": "1.0.2",
   "description": "Hooks to block dangerous commands and protect secrets",
   "author": {
     "name": "adrianR84"
